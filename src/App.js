@@ -5,7 +5,6 @@ import { Dimmer, Loader } from 'semantic-ui-react';
 
 import LoginPage from './js/LoginPage';
 import MainRouter from './js/MainRouter';
-import AppContext from './js/context';
 class App extends Component{
   state = {
     fetching: false,
