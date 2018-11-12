@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import qs from 'qs';
 import { Dimmer, Loader } from 'semantic-ui-react';
 
 import LoginPage from './components/LoginPage';
@@ -15,10 +13,10 @@ class App extends Component{
           );
       } else if (this.state.fetched) {
           if (this.state.authenticated) {
-              return (<AppContext.Provider value={{umpire: this.state.umpire, decode: this.decode}}><MainRouter umpire={this.state.umpire}/></AppContext.Provider>);
+              return (<MainRouter />);
           }
           else {
-              return (<LoginPage decode={this.decode}/>);
+              return (<LoginPage error={this.props.user.error}/>);
           }
       }
       return null;
