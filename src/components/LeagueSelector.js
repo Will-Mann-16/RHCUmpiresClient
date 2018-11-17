@@ -1,37 +1,33 @@
 import React from 'react';
 import {Dropdown} from 'semantic-ui-react';
 import axios from 'axios';
+import {createInstance} from "../config";
 export default class LeagueSelector extends React.Component{
     state = {
         fetching: false,
         fetched: false,
         error: null,
-        leagues: []
+        leagues: [],
+        activeDivision: -1
     }
     componentWillMount(){
         this.setState({...this.state, fetching: true, fetched: false});
-        axios.get('http://localhost/rhcumpires/getLeagues.php').then(({data}) => {
-           if(data.success){
-                this.setState({...this.state, fetching: false, fetched: true, leagues: data.leagues});
-           }else{
-                this.setState({...this.state, fetching: false, fetched: true, error: data.message});
-           }
-        });
+        createInstance().get('/divisions/').then(({data}) => {
+            this.setState({...this.state, fetching: false, fetched: true, leagues: data});
+        }).catch((e) => this.setState({...this.state, fetching: false, fetched: true, error: e.message}));
     }
     render(){
+        var divisionOptions = this.state.leagues.map((division, key) => {
+            return {key: division.divisionID, text: division.Name, value: key}
+        });
+        var leagueOptions = this.state.activeDivision >= 0 ? this.state.leagues[this.state.activeDivision].Leagues.map((league) => {
+            return {key: league.leagueID, text: league.Name, value: league.leagueID};
+        }) : [];
         return (
-            <Dropdown placeholder={this.props.placeholder} loading={this.state.fetching} fluid search selection onChange={this.props.onChange} value={this.props.value}>
-                <Dropdown.Menu scrolling>
-                    {this.state.leagues.map((league, key) =>
-                        <React.Fragment key={key}>
-                            <Dropdown.Header content={league.Division.Name} />
-                            <Dropdown.Menu>
-                                {league.Leagues.map((newLeague, key2) => <Dropdown.Item value={newLeague.leagueID} key={key2}>{newLeague.Name}</Dropdown.Item>)}
-                            </Dropdown.Menu>
-                        </React.Fragment>
-                    )}
-                </Dropdown.Menu>
-            </Dropdown>
+            <React.Fragment>
+                <Dropdown placeholder='Division' loading={this.state.fetching} fluid search selection onChange={(e, {value}) => this.setState({...this.state, activeDivision: value})} value={this.state.activeDivision >= 0 ? this.state.activeDivision : null} options={divisionOptions}/>
+                {this.state.activeDivision >= 0 && <Dropdown placeholder='League' loading={this.state.fetching} fluid search selection onChange={(e, {value}) => this.props.onChange({name: 'league', value})} value={this.props.value} options={leagueOptions} />}
+            </React.Fragment>
         );
     }
 }

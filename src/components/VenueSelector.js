@@ -1,6 +1,6 @@
 import React from 'react';
-import {Dropdown} from 'semantic-ui-react';
-import axios from 'axios';
+import {Dropdown, Header} from 'semantic-ui-react';
+import {createInstance} from "../config";
 export default class VenueSelector extends React.Component{
     state = {
         fetching: false,
@@ -10,23 +10,15 @@ export default class VenueSelector extends React.Component{
     }
     componentWillMount(){
         this.setState({...this.state, fetching: true, fetched: false});
-        axios.get('http://localhost/rhcumpires/getVenues.php').then(({data}) => {
-           if(data.success){
-                this.setState({...this.state, fetching: false, fetched: true, venues: data.venues});
-           }else{
-                this.setState({...this.state, fetching: false, fetched: true, error: data.message});
-           }
-        });
+        createInstance().get('/venues/').then(({data}) => {
+            this.setState({...this.state, fetching: false, fetched: true, venues: data});
+        }).catch((e) => this.setState({...this.state, fetching: false, fetched: true, error: e.message}));
     }
     render(){
+        var options = this.state.venues.map((venue) => {
+            return {key: venue.venueID, text: venue.Name, value: venue.venueID, content: <Header content={venue.Name} subheader={venue.Address} />}
+        })
         return (
-            <Dropdown placeholder={this.props.placeholder} loading={this.state.fetching} fluid search selection onChange={this.props.onChange} value={this.props.value}>
-                <Dropdown.Menu scrolling>
-                    {this.state.venues.map((venue, key) =>
-                        <Dropdown.Item key={key} value={venue.venueID}>{venue.Address}</Dropdown.Item>
-                        )}
-                </Dropdown.Menu>
-            </Dropdown>
-        );
+            <Dropdown placeholder='Venue' loading={this.state.fetching} fluid search selection options={options} onChange={(e, {value}) => this.props.onChange({name: 'venue', value})} value={this.props.value} />);
     }
 }

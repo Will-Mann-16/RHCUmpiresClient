@@ -5,11 +5,6 @@ export default class AvailabilityPage extends React.Component{
     render(){
         return (
             <Container>
-                <AppContext.Consumer>
-                    {(context) => (
-                        <AvailabiltySelector context={context}/>
-                    )}
-                </AppContext.Consumer>
             </Container>
         );
     }

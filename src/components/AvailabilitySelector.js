@@ -9,8 +9,5 @@ export default class AvailabilitySelector extends React.Component{
         availability: []
     }
     componentWillMount(){
-        axios.get('http://localhost/rhcumpires/getAvailability.php', {params: {request: "AVAILABILITY_PAGE", umpireID: this.props.context.umpire.umpireID}}).then(({data}) => {
-
-        });
     }
 }

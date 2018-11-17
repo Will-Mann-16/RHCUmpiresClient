@@ -5461,7 +5461,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.10, prop-types@^15.6.0, prop-types@^15.6.1:
+prop-types@^15.5.10, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2:
   version "15.6.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
   dependencies:
@@ -6130,6 +6130,15 @@ selfsigned@^1.9.1:
   resolved "https://registry.yarnpkg.com/selfsigned/-/selfsigned-1.10.3.tgz#d628ecf9e3735f84e8bafba936b3cf85bea43823"
   dependencies:
     node-forge "0.7.5"
+
+semantic-ui-calendar-react@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/semantic-ui-calendar-react/-/semantic-ui-calendar-react-0.11.0.tgz#3fc257acf4c63c8cd8dbcc577ad0c8332c3bebef"
+  integrity sha512-OZwAdg2XYZwM3VxNl10TbJetDl4QCEEuhOt3cvn9Fm7Yxzzx3AjK3zID2UUP+VrBlGUDdo+5Yaq8q5Ii/Du7hg==
+  dependencies:
+    lodash "^4.17.10"
+    moment "^2.22.2"
+    prop-types "^15.6.2"
 
 semantic-ui-react@^0.82.0:
   version "0.82.0"

@@ -1,40 +1,21 @@
 import React from 'react';
-import axios from "axios/index";
+import { connect } from 'react-redux';
 import {Segment, Card, List, Divider, Button} from 'semantic-ui-react';
 import {Toggle} from 'react-powerplug';
-export default class SelectedFixtures extends React.Component {
-    state = {
-        fetching: false,
-        fetched: false,
-        error: null,
-        fixtures: []
-    }
-
-    componentWillMount() {
-        axios.get('http://localhost/rhcumpires/getFixtures.php', {
-            params: {
-                umpireID: this.props.context.umpire.umpireID,
-                request: 'PER_UMPIRE'
-            }
-        }).then((response) => {
-            if (response.data.success) {
-                this.setState({...this.state, fetching: false, fetched: true, fixtures: response.data.fixtures});
-            }
-            else {
-                this.setState({...this.state, fetching: false, fetched: true, error: 'Error with server'});
-            }
-        }).catch((error) => {
-            this.setState({...this.state, fetching: false, fetched: true, error: error});
-        });
+import {readSelectedFixtures} from "../actions/fixtureActions";
+ class SelectedFixtures extends React.Component {
+    componentWillMount(){
+        this.props.dispatch(readSelectedFixtures());
     }
 
     render() {
-        if (this.state.fetching) {
+        var {fixtures} = this.props;
+        if (fixtures.fetching) {
             return (
                 <Segment loading/>
             );
         }
-        var fixtures = this.state.fixtures.map((fixture, key) => {
+        var selectedFixtures = fixtures.selectedFixtures.map((fixture, key) => {
             var dateTime = new Date(fixture.DateTime);
             return (
                 <Toggle>
@@ -42,9 +23,9 @@ export default class SelectedFixtures extends React.Component {
                         <Card raised key={key}>
                             <Card.Content>
                                 <Card.Header>
-                                    {fixture.HomeTeam.ClubName + ' - ' + fixture.HomeTeam.TeamName}
+                                    {fixture.HomeTeam.Club.Name + ' - ' + fixture.HomeTeam.Name}
                                     <Divider horizontal>VS</Divider>
-                                    {fixture.AwayTeam.ClubName + ' - ' + fixture.AwayTeam.TeamName}
+                                    {fixture.AwayTeam.Club.Name + ' - ' + fixture.AwayTeam.Name}
                                 </Card.Header>
                                 <Card.Meta>
                                     {dateTime.toLocaleString()}
@@ -53,8 +34,8 @@ export default class SelectedFixtures extends React.Component {
                                 <Card.Description>{fixture.Venue.Address}</Card.Description>
                             </Card.Content>
                             <Card.Content style={on ? {} : {display: 'none'}}>
-                                <Card.Description>{fixture.League.LeagueName}</Card.Description>
-                                <Card.Description>{fixture.League.DivisionName}</Card.Description>
+                                <Card.Description>{fixture.League.Name}</Card.Description>
+                                <Card.Description>{fixture.League.Division.Name}</Card.Description>
                             </Card.Content>
                             <Card.Content extra style={on ? {} : {display: 'none'}}>
                                 <List>
@@ -88,9 +69,17 @@ export default class SelectedFixtures extends React.Component {
         return (
             <Segment>
                 <Card.Group>
-                    {fixtures}
+                    {selectedFixtures}
                 </Card.Group>
             </Segment>
         );
     }
 }
+
+const mapStateToProps = state => {
+     return {
+         fixtures: state.fixtures
+     }
+};
+
+ export default connect(mapStateToProps)(SelectedFixtures);

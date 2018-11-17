@@ -2,7 +2,7 @@ import React from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import Navbar from './Navbar';
 import DashboardPage from './DashboardPage';
-import AvailabilityPage from './AvailabilityPage';
+import AdminPage from "./AdminPage";
 export default class MainRouter extends React.Component{
     render(){
         return (
@@ -11,7 +11,7 @@ export default class MainRouter extends React.Component{
                     <Navbar />
                 <Switch>
                     <Route path='/' name='dashboard' exact component={DashboardPage}/>
-                    <Route path='/availability' name='availability' exact component={AvailabilityPage} />
+                    <Route path='/admin' name='admin' exact component={AdminPage}/>
                 </Switch>
                 </React.Fragment>
             </BrowserRouter>

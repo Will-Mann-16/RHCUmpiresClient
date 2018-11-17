@@ -4,7 +4,11 @@ import {Table, Button} from 'semantic-ui-react';
 import _ from 'lodash';
 
 const TODAY_STYLE = {fontWeight: 'bold', textShadow: '0 0 3px #CCC'};
-const UMPIRE_FIXTURE_STYLE = {backgroundColor: '#4CAF50'};
+const UMPIRE_FIXTURE_STYLE = {backgroundColor: '#3498db'};
+const AVAILABLE_FIXTURE_STYLE = {backgroundColor: '#27ae60'};
+const MAYBE_AVAILABLE_FIXTURE_STYLE = {backgroundColor: '#e67e22'};
+const NOT_AVAILABLE_FIXTURE_STYLE = {backgroundColor: '#c0392b'};
+const UNDECIDED_FIXTURE_STYLE = {backgroundColor: '#95a5a6'};
 export default class Calendar extends React.Component {
     state = {
         activeDay: moment().startOf('month'),
@@ -28,15 +32,27 @@ export default class Calendar extends React.Component {
         var monthCounter = this.state.activeDay.clone();
         var week = [];
         var offset = this.state.activeDay.day() - 1;
+        var selectedDates = this.props.selected.map((elem) => {
+            return {Style: UMPIRE_FIXTURE_STYLE, DateTime: elem.DateTime};
+        });
+        var availableDates = this.props.available.map((elem) => {
+            switch(elem.Available){
+                case 'UNDECIDED':
+                    return {Style: UNDECIDED_FIXTURE_STYLE, DateTime: elem.DateTime};
+                case 'YES':
+                    return {Style: AVAILABLE_FIXTURE_STYLE, DateTime: elem.DateTime};
+                case 'NO':
+                    return {Style: NOT_AVAILABLE_FIXTURE_STYLE, DateTime: elem.DateTime};
+                case 'MAYBE':
+                    return {Style: MAYBE_AVAILABLE_FIXTURE_STYLE, DateTime: elem.DateTime};
+            }
+        });
+        var dates = [...selectedDates, ...availableDates];
         _.times(monthCounter.daysInMonth(), n => {
-            var type = this.props.dates.find((element) => moment(element.DateTime).format('YYYY-MM-DD') === monthCounter.format('YYYY-MM-DD'));
+            var newStyle = dates.find((element) => moment(element.DateTime).format('YYYY-MM-DD') === monthCounter.format('YYYY-MM-DD'));
             var style = {};
-            if (type) {
-                switch (type.Type) {
-                    case 'UMPIRE_FIXTURE':
-                        _.merge(style, UMPIRE_FIXTURE_STYLE)
-                        break;
-                }
+            if (newStyle) {
+                _.merge(style, newStyle.Style)
             }
             if (monthCounter.format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
                 style = _.merge(style, TODAY_STYLE);

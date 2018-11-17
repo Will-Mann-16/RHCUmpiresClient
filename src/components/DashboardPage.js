@@ -1,22 +1,25 @@
 import React from 'react';
-import AppContext from './context';
+import { connect } from 'react-redux';
 import SelectedFixtures from './SelectedFixtures';
-import AvailabilityCalendar from './AvailabilityCalendar';
-import {Container} from 'semantic-ui-react';
-export default class DashboardPage extends React.Component{
+import {Container, Header} from 'semantic-ui-react';
+import AvailabilityCalendar from "./AvailabilityCalendar";
+class DashboardPage extends React.Component{
     render(){
         return (
             <Container>
-                <AppContext.Consumer>
-                    {context => (
-                        <React.Fragment>
-                            <SelectedFixtures small context={context}/>
-                            <AvailabilityCalendar context={context}/>
-                        </React.Fragment>
-                        )}
-
-                </AppContext.Consumer>
+                <Header as='h1'>Reading Hockey Umpires</Header>
+                <Header as='h2'>{this.props.umpire.user.Firstname} {this.props.umpire.user.Surname}</Header>
+                <SelectedFixtures small/>
+                <AvailabilityCalendar/>
             </Container>
         );
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        umpire: state.umpire
+    }
+};
+
+export default connect(mapStateToProps)(DashboardPage);

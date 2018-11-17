@@ -1,32 +1,15 @@
 import React from 'react';
-import axios from 'axios';
-import qs from 'qs';
+import { connect } from 'react-redux';
 import {Form, Message, Container} from 'semantic-ui-react';
+import {authenticateUmpire} from "../actions/umpireActions";
 
-export default class LoginPage extends React.Component{
+class LoginPage extends React.Component{
     state = {
-        error: null,
         email: '',
         password: ''
     }
     submitForm = () => {
-        axios.post('http://localhost/rhcumpires/auth.php', qs.stringify({email: this.state.email, password: this.state.password, request: 'SIGN'})).then((response) => {
-            if(response.data.success){
-                if(response.data.authenticated){
-                    localStorage.setItem("UMPIRE_TOKEN", response.data.token);
-                    this.props.decode();
-                }
-                else{
-                    this.setState({...this.state, error: 'Invalid Email/Password Combination'});
-                }
-            }
-            else{
-                this.setState({...this.state, error: 'Error with server, please try again later.'});
-            }
-        }).catch((error) =>{
-            console.log(error);
-            this.setState({...this.state, error: 'Error with server, please try again later.'});
-        });
+        this.props.dispatch(authenticateUmpire(this.state.email, this.state.password));
     }
     render(){
         return(
@@ -36,8 +19,16 @@ export default class LoginPage extends React.Component{
                     <Form.Input fluid label='Password' placeholder='Password' type='password' onChange={(e) => this.setState({...this.state, password: e.target.value})} value={this.state.password}/>
                     <Form.Button onClick={this.submitForm}>Login</Form.Button>
                 </Form>
-                {this.state.error && (<Message negative><Message.Header>{this.state.error}</Message.Header></Message>)}
+                {this.props.umpire.error && (<Message negative><Message.Header>{this.props.umpire.error}</Message.Header></Message>)}
             </Container>
         );
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        umpire: state.umpire
+    }
+}
+
+export default connect(mapStateToProps)(LoginPage);
